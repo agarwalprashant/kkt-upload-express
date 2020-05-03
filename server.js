@@ -2,6 +2,43 @@ const express = require('express')
 const bodyParser= require('body-parser')
 const app = express()
 const multer = require('multer');
+
+// const mongoose = require("mongoose");
+// const userSchema = require("./userSchema.js");
+// const User = mongoose.model("user", userSchema, "user");
+
+// const connectionString = "mongodb+srv://agarwalprashant1408:prashant1408@cluster0-4ohi3.mongodb.net/test?retryWrites=true&w=majority";
+// const connectionString = "mongodb://localhost:27017";
+
+
+// async function createUser(username) {
+//   return new User({
+//     username,
+//     created: Date.now()
+//   }).save();
+// }
+
+// async function findUser(username) {
+//   return await User.findOne({ username });
+// }
+
+// (async () => {
+//   const connector = mongoose.connect(connectionString);
+//   const username = process.argv[2].split("=")[1];
+
+//   let user = await connector.then(async () => {
+//     return findUser(username);
+//   });
+
+//   if (!user) {
+//     user = await createUser(username);
+//   }
+
+//   console.log(user);
+//   process.exit(0);
+// })();
+
+
 fs = require('fs-extra')
 app.use(bodyParser.urlencoded({extended: true}))
 
@@ -9,6 +46,7 @@ const MongoClient = require('mongodb').MongoClient
 ObjectId = require('mongodb').ObjectId
 
 const myurl = 'mongodb://localhost:27017';
+// const myurl = 'mongodb+srv://agarwalprashant1408:prashant1408@cluster0-4ohi3.mongodb.net/test?retryWrites=true&w=majority';
 
 
 var storage = multer.diskStorage({
@@ -21,6 +59,11 @@ var storage = multer.diskStorage({
 })
 
 var upload = multer({ storage: storage })
+
+
+
+
+
 
 MongoClient.connect(myurl, (err, client) => {
   if (err) return console.log(err)
@@ -45,6 +88,16 @@ app.post('/uploadfile', upload.single('myFile'), (req, res, next) => {
     return next(error)
 
   }
+  db.collection('mycollection').insertOne(file, (err, result) => {
+  	console.log(result)
+
+    if (err) return console.log(err)
+
+    console.log('saved to database')
+    res.redirect('/')
+  
+    
+  })
 
  
     res.send(file)
